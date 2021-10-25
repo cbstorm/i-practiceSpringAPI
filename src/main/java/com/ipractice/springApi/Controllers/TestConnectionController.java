@@ -14,7 +14,7 @@ public class TestConnectionController {
 
     @GetMapping
     public ResponseEntity<ResponseSchema> testConnection(){
-        String[] data = {"hello", "xin chao"};
+        String data = "hello";
         ResponseSchema responseSchema = new ResponseSchema("success",data);
         return new ResponseEntity<ResponseSchema>(responseSchema, HttpStatus.OK);
     }

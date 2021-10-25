@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.UUID;
 
-@Entity(name ="joined")
-@Table(name = "joined")
+@Entity(name = "join_requests")
+@Table(name="join_requests")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class JoinedEntity {
+@AllArgsConstructor
+public class JoinRequestEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "id")
+    @Column(name="id")
     private UUID _id;
 
     @Column(name="user_id",nullable = false)
@@ -29,7 +29,4 @@ public class JoinedEntity {
     @JsonBackReference(value = "class")
     private ClassEntity classEntity;
 
-
-    @Column(name = "role")
-    private String role;
 }

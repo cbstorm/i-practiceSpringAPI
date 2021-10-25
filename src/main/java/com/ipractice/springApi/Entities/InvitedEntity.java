@@ -1,5 +1,6 @@
 package com.ipractice.springApi.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
+@Entity(name="invited")
 @Table(name="invited")
 @Data
 @AllArgsConstructor
@@ -18,11 +19,11 @@ public class InvitedEntity {
     @Column(name="id")
     private UUID _id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="user_id")
-    private UserEntity userEntity;
+    @Column(name="user_id",nullable = false)
+    private String userId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="class_id")
+    @JsonBackReference(value = "class")
     private ClassEntity classEntity;
 }
