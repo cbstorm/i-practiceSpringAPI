@@ -16,6 +16,8 @@ public interface ClassService {
 
     List<ClassEntity> getAllClass();
 
+    ClassEntity getOneClass(UUID classId);
+
     List<JoinedEntity> getAllUserOfClass(UUID classId);
 
     void inviteMembers(UUID classId, String adminId, List<String> listUserId);
@@ -25,4 +27,12 @@ public interface ClassService {
     List<JoinRequestEntity> getAllJoinRequest(UUID classId);
 
     void acceptJoinRequest(UUID classId, String adminId, UUID requestId);
+
+    void rejectJoinRequest(UUID classId, String adminId, UUID requestId);
+
+    void deleteMember(UUID classId, String adminId, UUID joinedId);
+
+    int getMemberAmount(UUID classId);
+
+
 }

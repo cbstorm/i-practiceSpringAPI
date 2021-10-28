@@ -12,8 +12,11 @@ public interface UserService {
 
     List<ClassEntity> getAllInviteOfUserId(String userId);
 
-    void sendJoinRequest(UUID classId, String userId);
+    void sendOrDestroyJoinRequest(UUID classId, String userId);
     void acceptInvite(UUID classId, String userId);
 
 
+    void rejectInvite(UUID classId, String userId);
+
+    void leaveClass(UUID classId, String userId);
 }

@@ -12,6 +12,6 @@ import java.util.UUID;
 @Repository
 public interface JoinRequestRepository extends JpaRepository<JoinRequestEntity, UUID> {
 
-    @Query(value = "SELECT * FROM join_requests WHERE id = :id AND class_id = :classId",nativeQuery = true)
-    Optional<JoinRequestEntity> findOneByIdAndClassId(@Param("id") UUID id,@Param("classId") UUID classId);
+    @Query(value = "SELECT * FROM join_requests WHERE class_id = :classId AND user_id = :userid",nativeQuery = true)
+    Optional<JoinRequestEntity> findOneByClassIdAndUserId(@Param("classId") UUID classId,@Param("userid") String userId);
 }

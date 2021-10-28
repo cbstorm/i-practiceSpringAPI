@@ -4,6 +4,7 @@ import com.ipractice.springApi.Entities.ClassEntity;
 import com.ipractice.springApi.Entities.InvitedEntity;
 import com.ipractice.springApi.Entities.JoinRequestEntity;
 import com.ipractice.springApi.Entities.JoinedEntity;
+import com.ipractice.springApi.Exceptions.BadRequestException;
 import com.ipractice.springApi.Exceptions.ResourceNotFoundException;
 import com.ipractice.springApi.Repositories.ClassRepository;
 import com.ipractice.springApi.Repositories.InvitedRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ClassRepository classRepository;
+
+    @Autowired
+    private JoinRequestRepository joinRequestRepository;
 
 
     @Override
@@ -53,8 +58,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendJoinRequest(UUID classId, String userId) {
+    public void sendOrDestroyJoinRequest(UUID classId, String userId) {
         ClassEntity classEntity = classRepository.findById(classId).orElseThrow(()-> new ResourceNotFoundException("NOT_FOUND"));
+        Optional<JoinRequestEntity> existedJoinRequest = joinRequestRepository.findOneByClassIdAndUserId(classId,userId);
+        if(existedJoinRequest.isPresent()){
+            joinRequestRepository.delete(existedJoinRequest.get());
+            return;
+        }
         JoinRequestEntity joinRequest = new JoinRequestEntity();
         joinRequest.setUserId(userId);
         joinRequest.setClassEntity(classEntity);
@@ -79,4 +89,22 @@ public class UserServiceImpl implements UserService {
         classRepository.save(classEntity);
 
     }
+
+    @Override
+    public void rejectInvite(UUID classId, String userId) {
+        InvitedEntity invited = invitedRepository.findOneByClassIdAndUserId(classId,userId).orElseThrow(()-> new ResourceNotFoundException("NOT_FOUND"));
+        invitedRepository.delete(invited);
+    }
+
+    @Override
+    public void leaveClass(UUID classId, String userId) {
+        JoinedEntity joined = joinedRepository.findOneByClassIdAndUserId(classId,userId).orElseThrow(()-> new ResourceNotFoundException("NOT_FOUND"));
+        if(!joined.getRole().equals("admin")){
+            joinedRepository.delete(joined);
+            return;
+        }
+        throw new BadRequestException("BAD_REQUEST");
+    }
+
+
 }

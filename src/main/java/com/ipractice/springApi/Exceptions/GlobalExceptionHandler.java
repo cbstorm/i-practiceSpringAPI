@@ -11,6 +11,15 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ResponseSchema> handleBadRequestException(BadRequestException exception){
+        Map<String, String> resultResponse = new HashMap<>();
+        resultResponse.put("errorMessage", exception.getMessage());
+        ResponseSchema responseSchema = new ResponseSchema("failure",resultResponse);
+        return new ResponseEntity(responseSchema, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ResponseSchema> handleResourceNotFound(ResourceNotFoundException exception){
         Map<String, String> resultResponse = new HashMap<>();

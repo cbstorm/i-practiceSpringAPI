@@ -41,11 +41,36 @@ public class ClassController {
         return new ResponseEntity<ResponseSchema>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/getOneClass/{classId}")
+    public ResponseEntity<ResponseSchema> getOneClass(@PathVariable("classId") UUID classId) {
+        ClassEntity classEntity = classService.getOneClass(classId);
+        ResponseSchema response = new ResponseSchema("success", classEntity);
+        return new ResponseEntity<ResponseSchema>(response, HttpStatus.OK);
+    }
+
+    // Get Member amount
+    @GetMapping("/countMembers/{classId}")
+    public ResponseEntity<ResponseSchema> getMemberAmount(@PathVariable("classId") UUID classId) {
+        int userAmount = classService.getMemberAmount(classId);
+        ResponseSchema response = new ResponseSchema("success", userAmount);
+        return new ResponseEntity<ResponseSchema>(response, HttpStatus.OK);
+    }
+
     // Invite members
     @PostMapping("/members/{classId}")
     public ResponseEntity<ResponseSchema> inviteMembers(@PathVariable("classId") UUID classId, @RequestHeader("userId") String adminId, @RequestHeader("userId") String userId, @RequestBody Map<String, List<String>> body) {
         List<String> listUserId = body.get("members");
         classService.inviteMembers(classId, adminId, listUserId);
+        ResponseSchema response = new ResponseSchema();
+        response.setStatus("success");
+        return new ResponseEntity<ResponseSchema>(response, HttpStatus.OK);
+    }
+
+    // DELETE ONE Member
+    @DeleteMapping("/members/{classId}")
+    public ResponseEntity<ResponseSchema> deleteMember(@PathVariable("classId") UUID classId,@RequestHeader("userId") String adminId,@RequestBody Map<String,UUID> body){
+        UUID joinedId = body.get("joinedId");
+        classService.deleteMember(classId,adminId,joinedId);
         ResponseSchema response = new ResponseSchema();
         response.setStatus("success");
         return new ResponseEntity<ResponseSchema>(response, HttpStatus.OK);
@@ -67,6 +92,8 @@ public class ClassController {
         return new ResponseEntity<ResponseSchema>(response, HttpStatus.OK);
     }
 
+
+
     // GET ALl Join Requests
     @GetMapping("/request/{classId}")
     public ResponseEntity<ResponseSchema> getAllJoinRequestOfClass(@PathVariable("classId") UUID classId){
@@ -79,6 +106,15 @@ public class ClassController {
     public ResponseEntity<ResponseSchema> acceptJoinRequestOfClass(@PathVariable("classId") UUID classId,@RequestHeader("userId") String adminId ,@RequestBody Map<String,UUID> body){
         UUID requestId = body.get("requestId");
         classService.acceptJoinRequest(classId,adminId,requestId);
+        ResponseSchema response = new ResponseSchema();
+        response.setStatus("success");
+        return new ResponseEntity<ResponseSchema>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/request/reject/{classId}")
+    public ResponseEntity<ResponseSchema> rejectJoinRequestOfClass(@PathVariable("classId") UUID classId,@RequestHeader("userId") String adminId ,@RequestBody Map<String,UUID> body){
+        UUID requestId = body.get("requestId");
+        classService.rejectJoinRequest(classId,adminId,requestId);
         ResponseSchema response = new ResponseSchema();
         response.setStatus("success");
         return new ResponseEntity<ResponseSchema>(response, HttpStatus.OK);
