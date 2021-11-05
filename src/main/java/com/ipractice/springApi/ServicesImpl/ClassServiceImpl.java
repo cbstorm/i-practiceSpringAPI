@@ -7,6 +7,7 @@ import com.ipractice.springApi.Entities.JoinedEntity;
 import com.ipractice.springApi.Exceptions.ResourceNotFoundException;
 import com.ipractice.springApi.Exceptions.UnAuthorizedException;
 import com.ipractice.springApi.Repositories.ClassRepository;
+import com.ipractice.springApi.Repositories.InvitedRepository;
 import com.ipractice.springApi.Repositories.JoinRequestRepository;
 import com.ipractice.springApi.Repositories.JoinedRepository;
 import com.ipractice.springApi.Services.ClassService;
@@ -24,6 +25,9 @@ public class ClassServiceImpl implements ClassService {
     private ClassRepository classRepository;
 
     @Autowired
+    private InvitedRepository invitedRepository;
+
+    @Autowired
     private JoinedRepository joinedRepository;
 
     @Autowired
@@ -39,10 +43,14 @@ public class ClassServiceImpl implements ClassService {
         joined.setRole("admin");
 
         List<JoinedEntity> joinedList = new ArrayList<>();
+        List<InvitedEntity> invitedList = new ArrayList<>();
+        List<JoinRequestEntity> joinRequestList = new ArrayList<>();
         joinedList.add(joined);
 
         classEntity.setAdminUser(userId);
         classEntity.setJoined(joinedList);
+        classEntity.setInvited(invitedList);
+        classEntity.setJoinRequest(joinRequestList);
         //Save class
         ClassEntity savedClass = classRepository.save(classEntity);
         return savedClass;
@@ -72,6 +80,7 @@ public class ClassServiceImpl implements ClassService {
         int memberAmount = joinedRepository.countJoinedByClassId(classId);
         return memberAmount;
     }
+
 
     @Override
     public List<InvitedEntity> getAllUserInvitedOfClass(UUID classId) {
@@ -145,5 +154,24 @@ public class ClassServiceImpl implements ClassService {
         classRepository.save(classEntity);
     }
 
+    @Override
+    public void unInviteMembers(UUID classId, String adminId, List<String> listUserId) {
+        ClassEntity classEntity = classRepository.findById(classId).orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+        if (!classEntity.getAdminUser().equals(adminId)) {
+            throw new UnAuthorizedException("UNAUTHORIZED");
+        }
+        String userId = listUserId.get(0);
+        InvitedEntity invited = invitedRepository.findOneByClassIdAndUserId(classId, userId).orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+        invitedRepository.delete(invited);
+    }
+
+    @Override
+    public void deleteClass(UUID classId, String adminId) {
+        ClassEntity classEntity = classRepository.findById(classId).orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+        if(!classEntity.getAdminUser().equals(adminId)){
+            throw new UnAuthorizedException("UNAUTHORIZED");
+        }
+        classRepository.delete(classEntity);
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.ipractice.springApi.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@Entity(name="classes")
+@Entity(name = "classes")
 @Table(name = "classes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(value = {"joined","invited","joinRequest"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "_id",
+        scope = UUID.class)
 public class ClassEntity {
     @Id
     @GeneratedValue
@@ -36,10 +39,8 @@ public class ClassEntity {
     @Column(name = "admin_user")
     private String adminUser;
 
-
     @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
     private List<JoinedEntity> joined;
-
 
     @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
     private List<InvitedEntity> invited;

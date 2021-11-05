@@ -35,4 +35,7 @@ public interface ClassService {
     int getMemberAmount(UUID classId);
 
 
+    void unInviteMembers(UUID classId, String adminId, List<String> listUserId);
+
+    void deleteClass(UUID classId, String adminId);
 }
