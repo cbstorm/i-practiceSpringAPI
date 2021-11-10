@@ -1,1 +1,0 @@
-web: java -Xms150M -jar target/springApi-0.0.1-SNAPSHOT.jar
